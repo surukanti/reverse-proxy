@@ -1,0 +1,46 @@
+server:
+  host: "0.0.0.0"
+  port: "8080"
+  tls: false
+
+backends:
+  - id: "variant-a"
+    servers:
+      - "http://app-variant-a:3000"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+  - id: "variant-b"
+    servers:
+      - "http://app-variant-b:3000"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+
+routes:
+  - name: "ab-test-route"
+    path_prefix: "/"
+    backend_id: "variant-a"
+    priority: 10
+
+policies:
+  rate_limit:
+    enabled: true
+    max_requests: 2000
+    window: "1m"
+  cors:
+    enabled: true
+    allowed_origins:
+      - "*"
+  auth:
+    enabled: false
+  cache:
+    enabled: true
+    ttl: "5m"
+    methods:
+      - "GET"
+      - "HEAD"

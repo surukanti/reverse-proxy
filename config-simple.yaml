@@ -1,0 +1,31 @@
+server:
+  host: 0.0.0.0
+  port: "8083"
+  tls: false
+
+backends:
+  - id: httpbin_backend
+    servers:
+      - https://httpbin.org
+    load_balancing: round_robin
+    health_check:
+      enabled: false
+
+routes:
+  - name: root
+    pattern: /
+    methods: [GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS]
+    backend_id: httpbin_backend
+    priority: 10
+
+policies:
+  rate_limit:
+    enabled: false
+  cors:
+    enabled: true
+    allowed_origins:
+      - "*"
+  auth:
+    enabled: false
+  cache:
+    enabled: false

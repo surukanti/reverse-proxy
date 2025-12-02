@@ -1,0 +1,64 @@
+server:
+  host: "0.0.0.0"
+  port: "8080"
+  tls: false
+
+backends:
+  - id: "monolith"
+    servers:
+      - "http://legacy-monolith:8000"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+  - id: "users-microservice"
+    servers:
+      - "http://users-service:3001"
+      - "http://users-service-backup:3001"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+  - id: "orders-microservice"
+    servers:
+      - "http://orders-service:3002"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+
+routes:
+  - name: "users-new-service"
+    path_prefix: "/api/users"
+    backend_id: "users-microservice"
+    priority: 20
+  - name: "orders-new-service"
+    path_prefix: "/api/orders"
+    backend_id: "orders-microservice"
+    priority: 20
+  - name: "everything-else-legacy"
+    path_prefix: "/"
+    backend_id: "monolith"
+    priority: 1
+
+policies:
+  rate_limit:
+    enabled: true
+    max_requests: 2000
+    window: "1m"
+  cors:
+    enabled: true
+    allowed_origins:
+      - "*"
+  auth:
+    enabled: true
+    type: "jwt"
+    secret: "migration-secret"
+  cache:
+    enabled: true
+    ttl: "5m"
+    methods:
+      - "GET"
