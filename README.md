@@ -77,6 +77,7 @@ All 10 use cases have complete configuration files in `examples/`:
 - `8-internal-tools.yaml` - Tool consolidation
 - `9-ab-testing.yaml` - A/B testing
 - `10-protocol-translation.yaml` - Protocol conversion
+- `11-basic-nginx-backends.yaml` - Docker setup with nginx backends
 
 ## 🔧 Key Configuration Features
 
