@@ -107,7 +107,12 @@ func main() {
 
 	// Setup rate limiting
 	if cfg.Policies.RateLimit.Enabled {
-		p.SetRateLimit(cfg.Policies.RateLimit.MaxRequests, 1*time.Minute)
+		window, err := time.ParseDuration(cfg.Policies.RateLimit.Window)
+		if err != nil {
+			log.Printf("Invalid rate limit window duration '%s', using 1 minute: %v", cfg.Policies.RateLimit.Window, err)
+			window = time.Minute
+		}
+		p.SetRateLimit(cfg.Policies.RateLimit.MaxRequests, window)
 	}
 
 	// Setup event handlers

@@ -81,7 +81,8 @@ func (p *Proxy) SetRateLimit(maxRequests int, window time.Duration) {
 // ServeHTTP implements http.Handler
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Check rate limit
-	if !p.rateLimiter.Handle(r.RemoteAddr) {
+	clientIP := p.getClientIP(r)
+	if !p.rateLimiter.Handle(clientIP) {
 		p.emitEvent(Event{
 			Type:      "rate_limit_exceeded",
 			Timestamp: time.Now(),
@@ -156,7 +157,6 @@ func (p *Proxy) forwardRequest(w http.ResponseWriter, r *http.Request, server *b
 		http.Error(w, "Bad Gateway: invalid server URL", http.StatusBadGateway)
 		return
 	}
-
 
 	// Create reverse proxy
 	proxy := httputil.NewSingleHostReverseProxy(server.URL)
