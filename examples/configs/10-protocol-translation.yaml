@@ -1,0 +1,55 @@
+server:
+  host: "0.0.0.0"
+  port: "8080"
+  tls: false
+
+backends:
+  - id: "grpc-backend"
+    servers:
+      - "http://grpc-service:50051"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+  - id: "websocket-backend"
+    servers:
+      - "http://ws-service:3000"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+  - id: "http2-backend"
+    servers:
+      - "https://http2-service:8443"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+
+routes:
+  - name: "grpc-web-route"
+    path_prefix: "/grpc"
+    backend_id: "grpc-backend"
+    priority: 20
+  - name: "websocket-route"
+    path_prefix: "/ws"
+    backend_id: "websocket-backend"
+    priority: 20
+  - name: "http2-route"
+    path_prefix: "/api/v2"
+    backend_id: "http2-backend"
+    priority: 10
+
+policies:
+  rate_limit:
+    enabled: true
+    max_requests: 3000
+    window: "1m"
+  cors:
+    enabled: true
+    allowed_origins:
+      - "*"
+  auth:
+    enabled: false
+  cache:
+    enabled: false

@@ -1,0 +1,63 @@
+server:
+  host: "0.0.0.0"
+  port: "8080"
+  tls: false
+
+backends:
+  - id: "tenant1-backend"
+    servers:
+      - "http://tenant1-app:3000"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+  - id: "tenant2-backend"
+    servers:
+      - "http://tenant2-app:3000"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+  - id: "tenant3-backend"
+    servers:
+      - "http://tenant3-app:3000"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+
+routes:
+  - name: "tenant1-route"
+    subdomain: "tenant1"
+    backend_id: "tenant1-backend"
+    priority: 20
+  - name: "tenant2-route"
+    subdomain: "tenant2"
+    backend_id: "tenant2-backend"
+    priority: 20
+  - name: "tenant3-route"
+    subdomain: "tenant3"
+    backend_id: "tenant3-backend"
+    priority: 20
+
+policies:
+  rate_limit:
+    enabled: true
+    max_requests: 500
+    window: "1m"
+  cors:
+    enabled: true
+    allowed_origins:
+      - "*"
+  auth:
+    enabled: true
+    type: "api_key"
+    secret: "tenant-api-key"
+  cache:
+    enabled: true
+    ttl: "5m"
+    methods:
+      - "GET"

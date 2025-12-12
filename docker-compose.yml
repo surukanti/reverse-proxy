@@ -10,7 +10,7 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - ./config.yaml:/etc/proxy/config/config.yaml:ro
+      - ./configs/config.yaml:/etc/proxy/config/config.yaml:ro
       - ./examples:/etc/proxy/examples:ro
     environment:
       CONFIG_FILE: /etc/proxy/config/config.yaml

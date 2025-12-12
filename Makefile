@@ -23,7 +23,7 @@ NC := \033[0m # No Color
 # Paths
 BIN_DIR := bin
 DOCKER_DIR := .
-CONFIG_FILE := config.yaml
+CONFIG_FILE := configs/config.yaml
 DOCKER_IMAGE := $(IMAGE_NAME):$(IMAGE_TAG)
 
 # Default target

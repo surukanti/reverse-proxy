@@ -1,0 +1,67 @@
+server:
+  host: "127.0.0.1"
+  port: "8080"
+  tls: false
+
+backends:
+  - id: "local-services"
+    servers:
+      - "http://localhost:3001"
+      - "http://localhost:3002"
+      - "http://localhost:3003"
+    health_check:
+      enabled: true
+      interval: "10s"
+      timeout: "2s"
+      path: "/health"
+  - id: "staging-api"
+    servers:
+      - "https://staging-api.example.com"
+    health_check:
+      enabled: true
+      interval: "30s"
+      timeout: "5s"
+      path: "/health"
+  - id: "prod-readonly"
+    servers:
+      - "https://api.example.com"
+    health_check:
+      enabled: true
+      interval: "60s"
+      timeout: "10s"
+      path: "/health"
+
+routes:
+  - name: "local-user-service"
+    path_prefix: "/users"
+    methods:
+      - "GET"
+      - "POST"
+      - "PUT"
+    backend_id: "local-services"
+    priority: 30
+  - name: "staging-integration"
+    path_prefix: "/staging"
+    backend_id: "staging-api"
+    priority: 20
+  - name: "prod-read-only"
+    path_prefix: "/api/public"
+    methods:
+      - "GET"
+    backend_id: "prod-readonly"
+    priority: 10
+
+policies:
+  rate_limit:
+    enabled: false
+  cors:
+    enabled: true
+    allowed_origins:
+      - "http://localhost:3000"
+  auth:
+    enabled: false
+  cache:
+    enabled: true
+    ttl: "2m"
+    methods:
+      - "GET"

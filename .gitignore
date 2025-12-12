@@ -16,6 +16,7 @@
 coverage.*
 *.coverprofile
 profile.cov
+*.prof
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
@@ -24,9 +25,64 @@ profile.cov
 go.work
 go.work.sum
 
+# Build artifacts
+bin/
+dist/
+build/
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
 # env file
 .env
+.env.local
+.env.*.local
 
 # Editor/IDE
-# .idea/
-# .vscode/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker
+.dockerignore
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Configuration overrides (keep templates)
+config.local.*
+configs/local.*
+examples/configs/local.*
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Certificates and keys (keep templates)
+*.pem
+*.key
+*.crt
+!*.pem.example
+!*.key.example
+!*.crt.example
