@@ -1,5 +1,10 @@
 # Reverse Proxy - Advanced Go Implementation
 
+[![Go CI](https://github.com/surukanti/reverse-proxy/actions/workflows/go.yml/badge.svg)](https://github.com/surukanti/reverse-proxy/actions/workflows/go.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/surukanti/reverse-proxy)](https://goreportcard.com/report/github.com/surukanti/reverse-proxy)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go Version](https://img.shields.io/badge/go-%3E%3D1.21-blue.svg)](https://golang.org/)
+
 A production-ready, feature-rich reverse proxy for Go supporting 10 different use cases with advanced networking capabilities.
 
 ## 🎯 Features
@@ -61,6 +66,42 @@ go build -o bin/proxy ./cmd/proxy
 ./bin/proxy -config examples/1-microservices-gateway.yaml
 ./bin/proxy -config examples/2-blue-green-deployment.yaml
 # ... and so on
+```
+
+## 🤖 CI/CD & Automation
+
+### GitHub Actions Workflows
+
+This project uses GitHub Actions for automated testing, building, and secure releases:
+
+- **Go CI** - Automated testing and building on every push/PR to `main`
+  - Runs `go build -v ./...` and `go test -v ./...`
+  - Tests on Ubuntu with Go 1.24.2
+  - Ensures code quality and prevents regressions
+
+- **SLSA3 Release** - Secure software supply chain for releases
+  - Generates provenance attestations for releases
+  - Uses OpenSSF SLSA framework for build security
+  - Triggered on release creation or manual dispatch
+
+### Development Commands
+
+```bash
+# Quick development cycle
+make build          # Build the binary
+make test           # Run all tests
+make coverage       # Generate coverage report
+make fmt            # Format code
+make lint           # Run linter
+
+# Docker development
+make build-docker   # Build Docker image
+make run-docker     # Run in Docker
+make test-docker    # Test Docker container
+
+# Full stack development
+make run-compose    # Run with Docker Compose
+make logs-compose   # View all logs
 ```
 
 ## 📁 Example Configurations

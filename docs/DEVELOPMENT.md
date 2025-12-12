@@ -56,6 +56,78 @@ docker-compose -f 11-basic-nginx-backends.yaml up --build
 Client Request → Middleware Chain → Router → Backend Selection → Proxy → Response
 ```
 
+## CI/CD Pipelines
+
+### GitHub Actions Workflows
+
+The project uses automated CI/CD pipelines to ensure code quality and reliability:
+
+#### Go CI Workflow (`go.yml`)
+- **Triggers**: Push and PR to `main` branch
+- **Environment**: Ubuntu latest with Go 1.24.2
+- **Steps**:
+  1. Checkout code
+  2. Setup Go environment
+  3. Build project (`go build -v ./...`)
+  4. Run tests (`go test -v ./...`)
+
+#### SLSA3 Release Workflow (`go-ossf-slsa3-publish.yml`)
+- **Triggers**: Release creation or manual dispatch
+- **Purpose**: Secure software supply chain
+- **Features**:
+  - Generates provenance attestations
+  - SLSA Level 3 compliance
+  - OpenSSF framework integration
+
+### Local Development with Make
+
+The project includes a comprehensive Makefile for development tasks:
+
+```bash
+# Core development
+make build          # Build binary
+make test           # Run tests
+make coverage       # Generate coverage report
+make fmt            # Format code
+make vet            # Run go vet
+make lint           # Run golangci-lint
+
+# Docker operations
+make build-docker   # Build Docker image
+make run-docker     # Run container
+make test-docker    # Test container endpoints
+make clean-docker   # Remove containers/images
+
+# Full stack
+make run-compose    # Start all services
+make logs-compose   # View all logs
+make clean-compose  # Stop and clean services
+
+# Utilities
+make help           # Show all targets
+make version        # Show versions
+make info           # Show build info
+```
+
+### Testing Strategy
+
+#### Unit Tests
+- Run automatically on every push/PR via GitHub Actions
+- Comprehensive coverage of all packages
+- Includes race detection for concurrent code
+- Generates coverage reports
+
+#### Integration Tests
+- Docker-based testing with `make test-docker`
+- Tests actual HTTP endpoints and health checks
+- Validates CORS, rate limiting, and routing
+
+#### Benchmarking
+```bash
+make bench          # Run performance benchmarks
+go test -bench=. -benchmem ./internal/proxy
+```
+
 ## Development Tasks
 
 ### Adding New Middleware

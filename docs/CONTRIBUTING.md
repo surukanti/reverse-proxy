@@ -36,6 +36,14 @@ make test
 go test ./...
 ```
 
+5. Run full CI checks locally:
+```bash
+make fmt          # Format code
+make vet          # Run go vet
+make lint         # Run linter
+make coverage     # Generate coverage report
+```
+
 ## Development Workflow
 
 ### 1. Choose an Issue
@@ -145,12 +153,30 @@ Use conventional commit format:
 - [ ] Linting passes (`make lint`)
 - [ ] Documentation is updated
 - [ ] Commit messages follow conventional format
+- [ ] CI checks pass (GitHub Actions)
+
+### CI/CD Requirements
+All pull requests must pass the automated CI pipeline:
+
+- **Go CI Workflow**: Builds and tests code on Ubuntu with Go 1.24.2
+- **Test Coverage**: Maintain or improve test coverage (>80%)
+- **Code Quality**: Passes `go vet` and linting checks
+- **Formatting**: Code follows Go standards (`go fmt`)
+
+The CI pipeline runs automatically on:
+- Every push to `main` branch
+- Every pull request targeting `main`
+- Manual triggers for releases
 
 ### Review Process
-1. Automated checks run (tests, linting, etc.)
+1. **Automated CI Checks**: GitHub Actions runs comprehensive checks
+   - Go build and test suite
+   - Code formatting and linting
+   - Security scanning (CodeQL)
+   - Dependency checks
 2. Code review by maintainers
 3. Address review feedback
-4. Merge when approved
+4. Merge when approved and CI passes
 
 ### Review Guidelines
 - Be constructive and respectful
