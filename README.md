@@ -150,6 +150,31 @@ cmd/proxy/          # Main entry point
 examples/           # 10 configuration examples for each use case
 ```
 
+## 🏗️ Architecture Diagram
+
+```mermaid
+graph LR
+    Client[Client] --> RP[Reverse Proxy]
+    RP --> MW[Middleware<br/>Auth • CORS • Logging • Rate Limit]
+    MW --> Router[Router<br/>Path • Subdomain • Header • Regex]
+    Router --> LB[Load Balancer<br/>Round Robin]
+    LB --> Backend1[Backend Service 1]
+    LB --> Backend2[Backend Service 2]
+    LB --> BackendN[Backend Service N]
+
+    Router -.-> Cache[(Response Cache)]
+    RP -.-> Events[Event System<br/>Monitoring • Metrics]
+    RP -.-> Advanced[A/B Testing<br/>Blue-Green<br/>Circuit Breaker]
+
+    classDef primary fill:#e3f2fd
+    classDef secondary fill:#f3e5f5
+    classDef backend fill:#e8f5e8
+
+    class Client,RP primary
+    class MW,Router,LB secondary
+    class Backend1,Backend2,BackendN backend
+```
+
 ## 🔐 Security Features
 
 - JWT/API Key authentication

@@ -56,6 +56,168 @@ docker-compose -f 11-basic-nginx-backends.yaml up --build
 Client Request → Middleware Chain → Router → Backend Selection → Proxy → Response
 ```
 
+## 🏗️ System Architecture
+
+```mermaid
+graph TB
+    %% Client Layer
+    Client[Client Applications<br/>Web Browsers, APIs, Mobile Apps]
+
+    %% Reverse Proxy Layer
+    subgraph "Reverse Proxy Server"
+        HTTP[HTTP/HTTPS Server<br/>Port 9000]
+        MW[Middleware Chain<br/>Auth, CORS, Logging, Rate Limiting]
+        Router[Router<br/>Path, Subdomain, Header, Regex Routing]
+        Cache[(Response Cache<br/>TTL-based)]
+        Health[Health Checker<br/>Background monitoring]
+    end
+
+    %% Load Balancing Layer
+    subgraph "Load Balancing & Backend Management"
+        LB[Load Balancer<br/>Round Robin, Weighted]
+        Pool[Backend Pool<br/>Server management]
+        HC[Health Checker<br/>Periodic health checks]
+    end
+
+    %% Backend Services Layer
+    subgraph "Backend Services"
+        API1[API Service 1<br/>http://api1:3000]
+        API2[API Service 2<br/>http://api2:3000]
+        DB[(Database)]
+        CacheSvc[(Cache Service)]
+    end
+
+    %% Advanced Features Layer
+    subgraph "Advanced Features"
+        AB[A/B Testing<br/>Traffic splitting]
+        BG[Blue-Green Deployments<br/>Gradual traffic shift]
+        CB[Circuit Breaker<br/>Fault tolerance]
+        RL[Rate Limiter<br/>Per-client limits]
+    end
+
+    %% Monitoring & Events
+    subgraph "Monitoring & Observability"
+        Events[Event System<br/>Request tracking, errors, cache hits]
+        Metrics[Metrics<br/>Request count, error rates, latency]
+        Logs[Structured Logging<br/>Request/response logs]
+    end
+
+    %% Flow connections
+    Client --> HTTP
+    HTTP --> MW
+    MW --> Router
+    Router --> LB
+    LB --> Pool
+    Pool --> HC
+
+    Router -.-> Cache
+    Cache -.-> HTTP
+
+    Pool --> API1
+    Pool --> API2
+
+    Router -.-> AB
+    Router -.-> BG
+    Router -.-> CB
+
+    MW -.-> RL
+
+    HTTP -.-> Events
+    Events -.-> Metrics
+    Events -.-> Logs
+
+    Health -.-> Pool
+    HC -.-> Pool
+
+    %% Styling
+    classDef clientClass fill:#e1f5fe
+    classDef proxyClass fill:#fff3e0
+    classDef backendClass fill:#e8f5e8
+    classDef advancedClass fill:#fce4ec
+    classDef monitoringClass fill:#f3e5f5
+
+    class Client clientClass
+    class HTTP,MW,Router,Cache,Health proxyClass
+    class LB,Pool,HC backendClass
+    class API1,API2,DB,CacheSvc backendClass
+    class AB,BG,CB,RL advancedClass
+    class Events,Metrics,Logs monitoringClass
+```
+
+### **Architecture Layers:**
+
+#### **1. Client Layer**
+- Web browsers, mobile apps, API clients
+- Sends HTTP/HTTPS requests to reverse proxy
+
+#### **2. Reverse Proxy Core**
+- **HTTP Server**: Handles incoming requests on configurable ports
+- **Middleware Chain**: Extensible request/response processing pipeline
+  - Authentication & Authorization (JWT, API Key, Basic)
+  - CORS policy enforcement
+  - Request logging with configurable format
+  - Rate limiting (token bucket algorithm)
+- **Router**: Advanced routing engine supporting:
+  - Path-based routing with prefix matching
+  - Subdomain-based routing for multi-tenant apps
+  - Header-based routing
+  - Regex pattern matching
+  - Priority-based route resolution
+- **Response Cache**: TTL-based caching for improved performance
+- **Health Checker**: Background monitoring of backend services
+
+#### **3. Backend Management**
+- **Load Balancer**: Round-robin distribution across healthy servers
+- **Backend Pool**: Dynamic server management with health tracking
+- **Health Checker**: Periodic HTTP health checks with configurable endpoints
+
+#### **4. Advanced Features**
+- **A/B Testing**: Traffic splitting between variants with real-time metrics
+- **Blue-Green Deployments**: Gradual traffic shifting between versions
+- **Circuit Breaker**: Fault tolerance and automatic failover
+- **Rate Limiting**: Per-client request throttling with configurable windows
+
+#### **5. Monitoring & Observability**
+- **Event System**: Structured event handling for:
+  - Request forwarding
+  - Cache hits/misses
+  - Backend health changes
+  - Rate limit exceeded
+  - Errors and failures
+- **Metrics**: Performance monitoring and statistics
+- **Logging**: Comprehensive request/response logging
+
+### **Detailed Request Flow:**
+```
+1. Client Request → HTTP Server (Port 9000)
+2. Rate Limiting Check → Return 429 if exceeded
+3. Middleware Chain Execution:
+   ├── Authentication validation
+   ├── CORS policy check
+   └── Request logging
+4. Router Matching:
+   ├── Path-based routing
+   ├── Subdomain routing
+   ├── Header-based routing
+   └── Regex pattern matching
+5. Cache Lookup → Return cached response if valid
+6. Backend Selection:
+   ├── Health check validation
+   ├── Load balancing (round-robin)
+   └── Server availability check
+7. Request Forwarding → Backend service
+8. Response Processing → Cache storage
+9. Event Emission → Metrics update
+10. Client Response → Complete request cycle
+```
+
+### **Configuration Integration:**
+- **YAML/JSON Config**: Centralized configuration management
+- **Dynamic Routing**: Route updates without restart
+- **Backend Pools**: Runtime server addition/removal
+- **Middleware Config**: Policy-based request processing
+- **Health Monitoring**: Automatic backend failover
+
 ## CI/CD Pipelines
 
 ### GitHub Actions Workflows
