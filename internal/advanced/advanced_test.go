@@ -1,4 +1,4 @@
-package proxy
+package advanced
 
 import (
 	"testing"
