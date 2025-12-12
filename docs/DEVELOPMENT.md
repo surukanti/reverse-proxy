@@ -71,6 +71,14 @@ The project uses automated CI/CD pipelines to ensure code quality and reliabilit
   3. Build project (`go build -v ./...`)
   4. Run tests (`go test -v ./...`)
 
+#### Docker Image CI Workflow (`docker-image.yml`)
+- **Triggers**: Push and PR to `main` branch
+- **Environment**: Ubuntu latest with Docker
+- **Steps**:
+  1. Checkout code
+  2. Build Docker image from Dockerfile
+  3. Tag with timestamp for uniqueness
+
 #### SLSA3 Release Workflow (`go-ossf-slsa3-publish.yml`)
 - **Triggers**: Release creation or manual dispatch
 - **Purpose**: Secure software supply chain

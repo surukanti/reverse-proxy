@@ -79,6 +79,11 @@ This project uses GitHub Actions for automated testing, building, and secure rel
   - Tests on Ubuntu with Go 1.24.2
   - Ensures code quality and prevents regressions
 
+- **Docker Image CI** - Automated Docker image building
+  - Builds Docker image on every push/PR to `main`
+  - Validates Dockerfile and build process
+  - Ensures containerization works correctly
+
 - **SLSA3 Release** - Secure software supply chain for releases
   - Generates provenance attestations for releases
   - Uses OpenSSF SLSA framework for build security
