@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 	"time"
 )
@@ -88,8 +89,11 @@ func TestChainExecuteMultiple(t *testing.T) {
 
 func TestLoggingMiddleware(t *testing.T) {
 	logCalls := 0
+	var mu sync.Mutex
 	logger := func(msg string) {
+		mu.Lock()
 		logCalls++
+		mu.Unlock()
 	}
 
 	lm := NewLoggingMiddleware(logger)
@@ -102,8 +106,13 @@ func TestLoggingMiddleware(t *testing.T) {
 		t.Errorf("expected no error, got %v", err)
 	}
 
-	if logCalls < 1 {
-		t.Fatal("expected at least one log call")
+	// Wait for the background goroutine to complete
+	time.Sleep(150 * time.Millisecond)
+
+	mu.Lock()
+	defer mu.Unlock()
+	if logCalls != 2 {
+		t.Fatalf("expected 2 log calls, got %d", logCalls)
 	}
 }
 

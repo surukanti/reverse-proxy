@@ -132,7 +132,7 @@ func TestHealthChecker(t *testing.T) {
 	server, _ := pool.AddServer(mockServer.URL, 1)
 
 	// Create health checker
-	hc := NewHealthChecker(pool, 100*time.Millisecond, 1*time.Second)
+	hc := NewHealthChecker(pool, 100*time.Millisecond, 1*time.Second, "/health")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -158,7 +158,7 @@ func TestHealthCheckerUnhealthy(t *testing.T) {
 	pool := NewPool()
 	server, _ := pool.AddServer(mockServer.URL, 1)
 
-	hc := NewHealthChecker(pool, 100*time.Millisecond, 1*time.Second)
+	hc := NewHealthChecker(pool, 100*time.Millisecond, 1*time.Second, "/health")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
